@@ -24,13 +24,15 @@ class ProjectResource extends Resource
         return $form
             ->schema([
                 Forms\Components\TextInput::make('title')
-                ->required()
-                ->maxLength(255)
-                ->placeholder('Project title')
-                ->rules('required'),
+                    ->required()
+                    ->maxLength(255)
+                    ->placeholder('Project title')
+                    ->rules('required'),
 
                 Forms\Components\FileUpload::make('image')
-                ->required()
+                    ->nullable()  // Make image optional if you want it to be editable without re-uploading
+                    ->image()
+                    ->disk('public')  // Define disk if required
             ]);
     }
 
@@ -43,8 +45,12 @@ class ProjectResource extends Resource
                 ->sortable(),
 
                 Tables\Columns\ImageColumn::make('image')
-                ->searchable()
-                ->sortable(),
+                    ->square()
+                    ->checkFileExistence(false)
+                    ->extraImgAttributes(['loading' => 'lazy'])
+                    ->getStateUsing(function ($record) {
+                        return asset('storage/' . $record->image);
+                    }),
             ])
             ->filters([
                 //

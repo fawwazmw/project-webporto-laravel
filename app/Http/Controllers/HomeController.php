@@ -2,13 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Project;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
 {
     public function index()
     {
-        return view('index');
+        // Ambil data proyek dari database
+        $projects = Project::all();
+
+        // Kirim data ke view 'index'
+        return view('index', compact('projects'));
     }
 
     public function pageView(Request $request)
